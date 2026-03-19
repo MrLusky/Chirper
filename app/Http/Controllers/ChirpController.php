@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Chirp;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ChirpController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -39,10 +41,7 @@ class ChirpController extends Controller
             'message.required' => 'Please write something to chirp!',
             'message.max' => 'Chirps must be 255 characters or less.',
         ]);
-        Chirp::create([
-            'message' => $validated['message'],
-            'user_id' => null,
-        ]);
+        auth()->user()->chirps()->create($validated);
 
         return redirect('/')->with('success', 'Your chirp has been posted!');
     }
@@ -60,7 +59,7 @@ class ChirpController extends Controller
      */
     public function edit(Chirp $chirp)
     {
-        // We'll add authorization in lesson 11
+        $this->authorize('update', $chirp);
         return view('chirps.edit', compact('chirp'));
     }
 
@@ -69,13 +68,14 @@ class ChirpController extends Controller
      */
     public function update(Request $request, Chirp $chirp)
     {
+        $this->authorize('update', $chirp);
         $validated = $request->validate([
             'message' => 'required|string|max:255',
         ], [
             'message.required' => 'Please write something to chirp!',
             'message.max' => 'Chirps must be 255 characters or less.',
         ]);
-        $chirp->update($validated);
+        /* $chirp->update($validated); (tecnicamente isso aqui é inútil agora)*/
 
         return redirect('/')->with('success', 'Your chirp has been updated!');
     }
