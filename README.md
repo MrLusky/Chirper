@@ -64,6 +64,18 @@ Os usuários agora podem curtir chirps.
 
 ---
 
+## Busca de Usuários
+
+Foi implementado um sistema de busca para encontrar outros usuários na plataforma.
+
+### Funcionalidades:
+
+- Pesquisa por nome de usuário
+- Exibição de resultados em tempo real ou via requisição
+- Acesso rápido ao perfil de outros usuários
+
+---
+
 ## Sobre o Projeto Original
 
 O **Chirper** é uma aplicação simples estilo microblog (semelhante ao Twitter), utilizada para demonstrar conceitos do Laravel como:
