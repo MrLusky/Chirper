@@ -90,7 +90,7 @@ class ChirpController extends Controller
             'message.required' => 'Please write something to chirp!',
             'message.max' => 'Chirps must be 255 characters or less.',
         ]);
-        /* $chirp->update($validated); (tecnicamente isso aqui é inútil agora) */
+        $chirp->update($validated);
 
         return redirect('/')->with('success', 'Your chirp has been updated!');
     }
