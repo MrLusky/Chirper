@@ -41,10 +41,29 @@
                     </defs>
                 </svg>
             </a>
+
+            <a href="/" class="btn btn-ghost btn-sm">
+                Home
+            </a>
+
+            <a href="{{ route('explore') }}" class="btn btn-ghost btn-sm">
+                Explore
+            </a>
         </div>
         <div class="navbar-end gap-2">
+            <form action="{{ route('users.index') }}" method="GET" class="mr-2">
+                <input type="text" name="search" placeholder="Search..." class="input input-bordered input-sm w-40">
+            </form>
+
             @auth
+                <img src="{{ auth()->user()->avatar
+                    ? asset('storage/' . auth()->user()->avatar)
+                    : 'https://avatars.laravel.cloud/' . urlencode(auth()->user()->email) }}"
+                    class="w-8 h-8 rounded-full">
                 <span class="text-sm">{{ auth()->user()->name }}</span>
+                <a href="{{ route('profile.edit') }}" class="btn btn-ghost btn-sm">
+                    My Profile
+                </a>
                 <form method="POST" action="/logout" class="inline">
                     @csrf
                     <button type="submit" class="btn btn-ghost btn-sm">Logout</button>

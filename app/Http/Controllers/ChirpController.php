@@ -3,21 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chirp;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 
 class ChirpController extends Controller
 {
     use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $chirps = Chirp::with('user')
-            ->latest()
-            ->take(50)
-            ->get();
+        $query = Chirp::with('user')->latest();
+
+        if (auth()->check()) {
+            $user = auth()->user();
+
+            // carrega quem ele segue
+            $user->load('following');
+
+            $followingIds = $user->following->pluck('id'); //pega a ID de quem eu sigo
+
+            $query->where(function ($q) use ($followingIds, $user) {
+                $q->whereIn('user_id', $followingIds) //pega os posts de quem eu sigo
+                ->orWhere('user_id', $user->id); //pega meus próprios posts
+            });
+        }
+
+    $chirps = $query->take(50)->get();
 
         return view('home', ['chirps' => $chirps]); /* Aqui eu basicamente digo que toda vez que eu escrever "chirps", eu me refiro ao "$chirps" */
     }
@@ -60,6 +74,7 @@ class ChirpController extends Controller
     public function edit(Chirp $chirp)
     {
         $this->authorize('update', $chirp);
+
         return view('chirps.edit', compact('chirp'));
     }
 
@@ -75,7 +90,7 @@ class ChirpController extends Controller
             'message.required' => 'Please write something to chirp!',
             'message.max' => 'Chirps must be 255 characters or less.',
         ]);
-        /* $chirp->update($validated); (tecnicamente isso aqui é inútil agora)*/
+        /* $chirp->update($validated); (tecnicamente isso aqui é inútil agora) */
 
         return redirect('/')->with('success', 'Your chirp has been updated!');
     }
@@ -83,10 +98,11 @@ class ChirpController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Chirp $chirp)
     {
         $this->authorize('delete', $chirp);
         $chirp->delete();
+
         return redirect('/')->with('success', 'Chirp deleted!');
     }
 }
