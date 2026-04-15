@@ -52,7 +52,7 @@ Foi implementado um sistema de seguidores entre usuários.
 
 ---
 
-## ❤️ Sistema de Like
+## Sistema de Like
 
 Os usuários agora podem curtir chirps.
 
